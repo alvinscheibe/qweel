@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import Dropzone from 'react-dropzone';
-import { Cloud, File } from 'lucide-react';
+import { Cloud, File, Loader2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useUploadThing } from '@/lib/uploadthing';
 import { useToast } from '@/components/ui/use-toast';
@@ -40,6 +40,7 @@ const UploadDropzone = () => {
   const { toast } = useToast();
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
+      console.log(file);
       router.push(`/dashboard/${file?.id}`);
     },
     retry: true,
@@ -71,7 +72,7 @@ const UploadDropzone = () => {
             variant: 'destructive'
           });
 
-
+        startPolling({ key });
       }}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
@@ -109,6 +110,12 @@ const UploadDropzone = () => {
               {isUploading? (
                 <div className={'w-full mt-4 max-w-xs mx-auto'}>
                   <Progress value={50} className={'h-1 w-full bg-zinc-200'} />
+                  {uploadProgress === 100 ? (
+                    <div className={'flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2'}>
+                      <Loader2 className={'h-4 w-4 animate-spin'} />
+                      Redirecting...
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
 
