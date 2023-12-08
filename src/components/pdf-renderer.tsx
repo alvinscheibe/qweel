@@ -33,6 +33,9 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [scale, setScale] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
+  const [rendererScale, setRendererScale] = useState<number | null>(null);
+
+  const isLoading = rendererScale !== scale;
 
   const { toast } = useToast();
   const { ref, width } = useResizeDetector();
@@ -150,7 +153,28 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               }}
               className={'max-h-full'} file={url}
             >
-              <Page pageNumber={currentPage} width={width? width : 1} scale={scale} rotate={rotation} />
+              {isLoading && rendererScale ? <Page
+                key={'@' + rendererScale}
+                pageNumber={currentPage}
+                width={width? width : 1}
+                scale={scale}
+                rotate={rotation}
+              /> : null}
+
+              <Page
+                key={'@' + scale}
+                className={cn(isLoading? 'hidden' : '')}
+                pageNumber={currentPage}
+                width={width? width : 1}
+                scale={scale}
+                rotate={rotation}
+                loading={
+                  <div className={'flex justify-center'}>
+                    <Loader2 className={'w-6 h-6 my-24 animate-spin'} />
+                  </div>
+                }
+                onRenderSuccess={() => setRendererScale(scale)}
+              />
             </Document>
           </div>
         </SimpleBar>
