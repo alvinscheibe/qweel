@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import SimpleBar from 'simplebar-react';
+import PdfFullscren from '@/components/pdf-fullscren';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
@@ -64,6 +65,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             aria-label={'previous page'}
             onClick={() => {
               setCurrentPage((prev) => prev - 1 > 1 ? prev - 1 : 1);
+              setValue('page', String(currentPage - 1));
             }}
             disabled={currentPage <= 1}
           >
@@ -91,6 +93,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             aria-label={'next page'}
             onClick={() => {
               setCurrentPage((prev) => (prev + 1 > numPages! ? numPages! : prev + 1))
+              setValue('page', String(currentPage + 1));
             }}
             disabled={currentPage >= numPages! || numPages === undefined}
           >
@@ -125,6 +128,8 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
           <Button variant={'ghost'} aria-label={'rotate 90 degrees'} onClick={() => setRotation((prev) => prev + 90)}>
             <RotateCw className={'w-4 h-4'} />
           </Button>
+
+          <PdfFullscren fileUrl={url} />
         </div>
       </div>
 
